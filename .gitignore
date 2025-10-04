@@ -9,11 +9,11 @@ artifacts/images/*.iso
 artifacts/images/*.raw
 artifacts/images/*.raw.xz
 
-# Firmware downloads (optional - comment out if you want to track these)
-# artifacts/firmware/*.elf
-# artifacts/firmware/*.dat
-# artifacts/firmware/*.bin
-# artifacts/firmware/*.dtb
+# Firmware downloads (large binary files - download via acquire.sh)
+artifacts/firmware/*.elf
+artifacts/firmware/*.dat
+artifacts/firmware/*.bin
+artifacts/firmware/*.dtb
 
 # Checksum files that are downloaded
 artifacts/checksums/*.sha256
