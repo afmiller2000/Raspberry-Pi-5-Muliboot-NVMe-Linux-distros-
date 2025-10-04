@@ -1,0 +1,73 @@
+# Log files
+artifacts/logs/*.log
+*.log
+
+# Downloaded images
+artifacts/images/*.img
+artifacts/images/*.img.xz
+artifacts/images/*.iso
+artifacts/images/*.raw
+artifacts/images/*.raw.xz
+
+# Firmware downloads (large binary files - download via acquire.sh)
+artifacts/firmware/*.elf
+artifacts/firmware/*.dat
+artifacts/firmware/*.bin
+artifacts/firmware/*.dtb
+
+# Checksum files that are downloaded
+artifacts/checksums/*.sha256
+artifacts/checksums/SHA*SUMS*
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+.temp/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-*
+.project
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Build artifacts
+*.o
+*.so
+*.a
+
+# Compressed archives
+*.tar.gz
+*.zip
+*.7z
+*.rar
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+env/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Keep directory structure but ignore content
+artifacts/logs/*
+!artifacts/logs/.gitkeep
+artifacts/images/*
+!artifacts/images/.gitkeep
