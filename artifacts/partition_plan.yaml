@@ -1,0 +1,163 @@
+# Raspberry Pi 5 Multiboot NVMe Partition Plan
+# This file documents the partition layout used by the multiboot scripts
+
+metadata:
+  version: "1.0"
+  description: "Multi-distribution boot setup for Raspberry Pi 5 on NVMe"
+  created: "2024"
+  target: "NVMe SSD (adjust sizes based on your device capacity)"
+
+# Partition Layout
+# All sizes in MB (MiB)
+# Adjust these values based on your NVMe capacity and needs
+
+partitions:
+  - number: 1
+    label: "FIRMWARE_A"
+    filesystem: "FAT32"
+    start: 1
+    end: 513
+    size: 512
+    mount: "/mnt/multiboot/firmware"
+    purpose: "Raspberry Pi firmware blobs, config.txt, device tree files"
+    flags: ["boot"]
+    required_files:
+      - "start4.elf"
+      - "start4x.elf"
+      - "start4cd.elf"
+      - "start4db.elf"
+      - "fixup4.dat"
+      - "fixup4x.dat"
+      - "fixup4cd.dat"
+      - "fixup4db.dat"
+      - "bootcode.bin"
+      - "config.txt"
+      - "*.dtb"
+
+  - number: 2
+    label: "BOOT_GRUB"
+    filesystem: "ext4"
+    start: 513
+    end: 1537
+    size: 1024
+    mount: "/mnt/multiboot/boot"
+    purpose: "GRUB bootloader, kernels, initrd images"
+    structure:
+      - "EFI/BOOT/"
+      - "grub/"
+      - "kernels/kubuntu/"
+      - "kernels/fedora/"
+
+  - number: 3
+    label: "KUBUNTU"
+    filesystem: "ext4"
+    start: 1537
+    end: 42497
+    size: 40960
+    mount: "/mnt/multiboot/kubuntu"
+    purpose: "Kubuntu root filesystem"
+    notes: "Adjust size based on your needs (40GB is a comfortable size)"
+
+  - number: 4
+    label: "FEDORA"
+    filesystem: "ext4"
+    start: 42497
+    end: 83457
+    size: 40960
+    mount: "/mnt/multiboot/fedora"
+    purpose: "Fedora root filesystem"
+    notes: "Adjust size based on your needs (40GB is a comfortable size)"
+
+  - number: 5
+    label: "DATA"
+    filesystem: "exFAT"
+    start: 83457
+    end: 134657
+    size: 51200
+    mount: "/mnt/multiboot/data"
+    purpose: "Shared data partition accessible from all distributions"
+    notes: "exFAT for cross-platform compatibility; use ext4 if Linux-only"
+
+  - number: 6
+    label: "SWAP"
+    filesystem: "swap"
+    start: 134657
+    end: 142849
+    size: 8192
+    mount: "N/A (activated via swapon)"
+    purpose: "Swap space shared by all distributions"
+    notes: "Size based on RAM; 8GB is typical for 8GB RAM systems"
+
+# Distribution Sources
+distributions:
+  kubuntu:
+    name: "Kubuntu"
+    version: "23.10"
+    arch: "arm64"
+    image_url: "https://cdimage.ubuntu.com/releases/23.10/release/ubuntu-23.10-preinstalled-desktop-arm64+raspi.img.xz"
+    checksum_url: "https://cdimage.ubuntu.com/releases/23.10/release/SHA256SUMS"
+    partition: 3
+    kernel_path: "/boot/vmlinuz"
+    initrd_path: "/boot/initrd.img"
+
+  fedora:
+    name: "Fedora"
+    version: "39"
+    arch: "aarch64"
+    image_url: "https://download.fedoraproject.org/pub/fedora/linux/releases/39/Spins/aarch64/images/Fedora-Minimal-39-1.5.aarch64.raw.xz"
+    checksum_url: "https://download.fedoraproject.org/pub/fedora/linux/releases/39/Spins/aarch64/images/Fedora-Spins-39-1.5-aarch64-CHECKSUM"
+    partition: 4
+    kernel_path: "/boot/vmlinuz-*"
+    initrd_path: "/boot/initramfs-*"
+
+# Firmware Sources
+firmware:
+  source: "https://github.com/raspberrypi/firmware/raw/master/boot"
+  files:
+    - "start4.elf"
+    - "start4x.elf"
+    - "start4cd.elf"
+    - "start4db.elf"
+    - "fixup4.dat"
+    - "fixup4x.dat"
+    - "fixup4cd.dat"
+    - "fixup4db.dat"
+    - "bootcode.bin"
+    - "bcm2711-rpi-4-b.dtb"
+    - "bcm2711-rpi-400.dtb"
+    - "bcm2711-rpi-cm4.dtb"
+
+# Boot Configuration
+boot:
+  bootloader: "GRUB"
+  default_os: "kubuntu"
+  timeout: 10
+  recovery_mode: true
+  
+# Notes and Recommendations
+notes:
+  - "Total space used by this plan: ~139GB + remaining space for additional distros"
+  - "Minimum NVMe capacity recommended: 256GB"
+  - "For 512GB or larger drives, consider increasing distro partition sizes"
+  - "FIRMWARE_A must be FAT32 for Raspberry Pi firmware compatibility"
+  - "BOOT_GRUB can be ext4 or FAT32 depending on bootloader requirements"
+  - "DATA partition uses exFAT for maximum compatibility with other systems"
+  - "Keep firmware files updated for latest bug fixes and features"
+  - "Consider leaving unallocated space for future distributions"
+
+# Customization Tips
+customization:
+  adding_distros:
+    - "Create additional partitions after the existing ones"
+    - "Update grub.cfg to add new boot entries"
+    - "Copy kernels to /boot/kernels/<distro_name>/"
+  
+  resizing:
+    - "Use parted or gparted to adjust partition sizes"
+    - "Ensure you resize before writing data to partitions"
+    - "Keep FIRMWARE_A at 512MB (sufficient for all firmware files)"
+  
+  different_filesystems:
+    - "Linux-only setup: use ext4 for DATA instead of exFAT"
+    - "More compatibility: use FAT32 for BOOT_GRUB (limited by file size)"
+    - "Better performance: use f2fs or btrfs for Linux partitions"
