@@ -1,0 +1,36 @@
+# Ignore downloaded OS images (large files)
+MultiBoot NVMe/artifacts/isos/*.img
+MultiBoot NVMe/artifacts/isos/*.img.xz
+MultiBoot NVMe/artifacts/isos/*.iso
+MultiBoot NVMe/artifacts/isos/*.iso.xz
+
+# Ignore logs
+MultiBoot NVMe/artifacts/logs/*.log
+MultiBoot NVMe/artifacts/logs/*.txt
+
+# Ignore manifests (optional - may want to keep some)
+MultiBoot NVMe/artifacts/manifests/*.json
+
+# Keep directory structure
+!MultiBoot NVMe/artifacts/isos/.gitkeep
+!MultiBoot NVMe/artifacts/logs/.gitkeep
+!MultiBoot NVMe/artifacts/manifests/.gitkeep
+
+# Ignore firmware downloads
+MultiBoot NVMe/artifacts/isos/firmware/
+
+# Ignore temporary files
+*.tmp
+*.bak
+*.backup
+*~
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore editor files
+*.swp
+*.swo
+.vscode/
+.idea/
